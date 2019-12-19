@@ -1,7 +1,7 @@
 import random
 import string
 
-from flask import Flask
+from flask import Flask, request
 
 from db import exec_query
 from utils import read_requirements
@@ -22,9 +22,14 @@ def hello_world():
 
 @app.route('/gen')
 def gen():
-    return ''.join(
-        random.choice(string.ascii_uppercase) for i in range(10)
-    )
+    number = int(request.args['number'])
+    # if number not in range(100):
+    #     return 'Wrong number'
+    if 0 < number < 100:
+        return ''.join(
+            random.choice(string.ascii_uppercase) for _ in range(10)
+        )
+    return 'Wrong number'
 
 
 @app.route('/req-txt')
@@ -34,7 +39,6 @@ def req_txt():
 
 @app.route('/all-customers')
 def all_customers():
-    from flask import request
     query = f'SELECT * FROM customers WHERE Country = \'{request.args["Country"]}\';'
     result = exec_query(query)
     return str(result)
